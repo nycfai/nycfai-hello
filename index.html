@@ -1,18 +1,78 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>NYCFA Project Progress Report</title>
+  </head>
   <body>
-    <h1>Hello World</h1>
+    <h1>Project Progress Report</h1>
+    <table border="1" id="ppr-table">
+      <thead>
+        <tr>
+          <th>Project Manager Code</th>
+          <th>Client</th>
+          <th>Building Address</th>
+          <th>Project Description</th>
+          <th>Service Category</th>
+          <th>Date Proposal Sent</th>
+          <th>Date Contract Signed</th>
+          <th>NYCFA Project Code</th>
+          <th>Contract Price</th>
+          <th>Sales Tax</th>
+          <th>Total Contract Price</th>
+          <th>Reimbursable Expenses</th>
+          <th>Initial Deposit Received</th>
+          <th>Payments Received</th>
+          <th>Outstanding Invoices</th>
+          <th>Remaining Collection Amount</th>
+        </tr>
+      </thead>
+      <tbody id="ppr-body"></tbody>
+    </table>
 
     <script type="module">
       import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
       const supabase = createClient(
         'https://leygxvdjsimoepmjxrrl.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxleWd4dmRqc2ltb2VwbWp4cnJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0OTgxODIsImV4cCI6MjA3NjA3NDE4Mn0.2V3KkQ1Y1ucZ41gSKU8mUp2KY4xSOMLkZq4ZBxTSN-8'
       );
 
-      // Optional test: print to console
-      console.log("Supabase client initialized:", supabase);
+      async function loadPPR() {
+        const { data, error } = await supabase
+          .from('ppr')
+          .select('*');
+
+        if (error) {
+          console.error("Error loading PPR:", error);
+          return;
+        }
+
+        const tbody = document.getElementById('ppr-body');
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${row.project_manager_code}</td>
+            <td>${row.client}</td>
+            <td>${row.building_address}</td>
+            <td>${row.project_description}</td>
+            <td>${row.service_category}</td>
+            <td>${row.date_sent || ''}</td>
+            <td>${row.date_signed || ''}</td>
+            <td>${row.nycfa_project_code}</td>
+            <td>${row.contract_price}</td>
+            <td>${row.sales_tax}</td>
+            <td>${row.total_contract_price}</td>
+            <td>${row.reimbursable_expense}</td>
+            <td>${row.initial_deposit_received}</td>
+            <td>${row.payments_received}</td>
+            <td>${row.outstanding_invoices}</td>
+            <td>${row.remaining_collection_amount}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      loadPPR();
     </script>
   </body>
 </html>
-
